@@ -4,4 +4,4 @@ vertexcover.x: vertexcover.cpp
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~
+	rm -f *.o *~ *.x
