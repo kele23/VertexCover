@@ -1,5 +1,5 @@
 vertexcover.x: vertexcover.cpp
-	g++ -o $@ $< -std=c++11
+	g++ -g -o $@ $< -std=c++11
 
 .PHONY: clean
 
