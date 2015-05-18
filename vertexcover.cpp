@@ -108,7 +108,7 @@ END STRUTTURE UTILI
 ------------------------------*/
 
 void log(std::string,int V,Vertex** vertices,int E,Edge** edges);
-void reload_weight(int V,Vertex** vertices,int E);
+void reload_weight(int V,Vertex** vertices,int E,bool use_degree);
 
 int main(int argc,char* argv[]){
 
@@ -164,9 +164,11 @@ int main(int argc,char* argv[]){
 	/*------------------------------
 	COMPUTAZIONE RISULTATO
 	------------------------------*/
-	
-	//BAR-YEHUDA&EVEN weighted by KELE
-	for(int i = 0;i < E; i++){
+
+	reload_weight(V,vertices,1,false);
+
+	//BAR-YEHUDA & EVEN con pesi ad 1
+	for(int i = 0; i < E; i++){
 		
 		Vertex* vA = vertices[edges[i]->getVertexA()];
 		Vertex* vB = vertices[edges[i]->getVertexB()];
@@ -178,14 +180,39 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Versione 1, Uso dell'algoritmo BAR-YEHUDA&EVEN con pesi",V,vertices,E,edges);
+	log("Uso dell'algoritmo BAR-YEHUDA & EVEN con pesi ad 1",V,vertices,E,edges);
+
+	
 
 
-	reload_weight(V,vertices,E);
+
+	reload_weight(V,vertices,E,true);
+
+	//BAR-YEHUDA & EVEN con pesi by Kele
+	for(int i = 0; i < E; i++){
+		
+		Vertex* vA = vertices[edges[i]->getVertexA()];
+		Vertex* vB = vertices[edges[i]->getVertexB()];
+		
+		int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
+		
+		vA->setWeight(vA->getWeight()-epsilon);
+		vB->setWeight(vB->getWeight()-epsilon);
+
+	}
+
+	log("Uso dell'algoritmo BAR-YEHUDA & EVEN con pesi by Kele",V,vertices,E,edges);
 
 
-	//BAR-YEHUDA&EVEN modified by KELE
-	for(int i = 0;i < E; i++){
+	
+
+
+
+
+	reload_weight(V,vertices,1,false);
+
+	//BAR-YEHUDA & EVEN modificato da KELE ( pesi a 1 )
+	for(int i = 0; i < E; i++){
 		
 		Vertex* vA = vertices[edges[i]->getVertexA()];
 		Vertex* vB = vertices[edges[i]->getVertexB()];
@@ -201,7 +228,34 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Versione 2, modifica grado a rimozione di un arco",V,vertices,E,edges);
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Basato su BAR-YEHUDA & EVEN ) con pesi ad 1",V,vertices,E,edges);
+
+
+
+
+
+
+
+	reload_weight(V,vertices,E,true);
+
+	//BAR-YEHUDA & EVEN modificato da KELE ( pesi a kele )
+	for(int i = 0; i < E; i++){
+		
+		Vertex* vA = vertices[edges[i]->getVertexA()];
+		Vertex* vB = vertices[edges[i]->getVertexB()];
+		
+		//int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
+		
+		Vertex* min = vA->getWeight() < vB->getWeight() ? vA : vB;
+		Vertex* max = min == vA ? vB : vA;
+
+		min->setWeight(0);
+		if(max->getWeight() != 0)
+			max->setWeight(max->getWeight()+1);
+
+	}
+
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Basato su BAR-YEHUDA & EVEN ) con pesi by Kele",V,vertices,E,edges);
 
 	/*------------------------------
 	END COMPUTAZIONE RISULTATO
@@ -257,7 +311,7 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges){
 
 }
 
-void reload_weight(int V,Vertex** vertices,int E){
+void reload_weight(int V,Vertex** vertices,int E,bool use_degree){
 
 	for(int i = 0; i < V; i++){
 
@@ -266,7 +320,10 @@ void reload_weight(int V,Vertex** vertices,int E){
 			degree = vertices[i]->getEdges()->size();
 		}
 
-		vertices[i]->setWeight(E-degree);
+		if(use_degree)
+			vertices[i]->setWeight(E-degree);
+		else
+			vertices[i]->setWeight(E);
 
 	}
 
