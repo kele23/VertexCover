@@ -72,32 +72,6 @@ public:
 		this->weight = weight;
 	}
 
-	//ITEERATE EDGES
-	/*iterator begin() {
-		if(this->edges != NULL)
-			this->edges->begin();
-		return NULL; 
-	}
-
-    const_iterator begin() const {
-    	if(this->edges != NULL)
-			this->edges->cbegin();
-		return NULL; 
-    }
-
-    iterator end() {
-    	if(this->edges != NULL)
-			this->edges->end();
-		return NULL; 
-    }
-
-    const_iterator end() const {
-    	if(this->edges != NULL)
-			this->edges->cend();
-		return NULL;
-    }*/
-
-
 private:
 	int weight;
 	std::unordered_set<int> *edges;
@@ -211,7 +185,7 @@ int main(int argc,char* argv[]){
 
 	reload_weight(V,vertices,1,false);
 
-	//BAR-YEHUDA & EVEN modificato da KELE ( pesi a 1 )
+	//Algoritmo KELE ( pesi a 1 )
 	for(int i = 0; i < E; i++){
 		
 		Vertex* vA = vertices[edges[i]->getVertexA()];
@@ -238,7 +212,7 @@ int main(int argc,char* argv[]){
 
 	reload_weight(V,vertices,E,true);
 
-	//BAR-YEHUDA & EVEN modificato da KELE ( pesi a kele )
+	//ALgoritmo KELE ( pesi a kele )
 	for(int i = 0; i < E; i++){
 		
 		Vertex* vA = vertices[edges[i]->getVertexA()];
