@@ -231,6 +231,10 @@ int main(int argc,char* argv[]){
 
 	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Basato su BAR-YEHUDA & EVEN ) con pesi by Kele",V,vertices,E,edges);
 
+
+
+
+
 	/*------------------------------
 	END COMPUTAZIONE RISULTATO
 	------------------------------*/
@@ -238,13 +242,24 @@ int main(int argc,char* argv[]){
 
 
 
-
-
 	/*------------------------------
 	SCRITTURA RISULTATO
 	------------------------------*/
+	FILE *output = fopen("output.txt","w");
 
+	std::stringstream soluzione;
 
+	int cardinality = 0;
+	for(int i = 0; i < V; i++){
+		if(vertices[i]->getWeight() == 0){
+			cardinality++;
+			soluzione << i << " ";
+		}	
+	}
+
+	fprintf(output,"%d %s\n",cardinality,soluzione.str().c_str());
+
+	fclose(output);
 	/*------------------------------
 	END SCRITTURA RISULTATO
 	------------------------------*/
@@ -264,7 +279,7 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges){
 	std::stringstream soluzione;
 
 	for(int i = 0; i < V; i++){
-		std::cout << i << " " << vertices[i]->getWeight() << " -> ";
+		std::cout << "V: " << i << "	W: " << vertices[i]->getWeight() << "	edges-> ";
 		std::unordered_set<int>* es = vertices[i]->getEdges();
 		if(es == NULL){
 			std::cout << "NONE";
