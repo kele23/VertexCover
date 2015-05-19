@@ -9,6 +9,9 @@
 /*------------------------------
 STRUTTURE UTILI
 ------------------------------*/
+#define WHITE 0
+#define BLACK 1
+
 class Edge{
 
 public:
@@ -26,6 +29,10 @@ public:
 		this->vertexB = vertexB;
 	}
 
+	void setColor(int color){
+		this->color = color;
+	}
+
 	int getVertexA(){
 		return this->vertexA;
 	}
@@ -34,9 +41,14 @@ public:
 		return this->vertexB;
 	}
 
+	int getColor(){
+		return this->color;
+	}
+
 private:
 	int vertexA;
 	int vertexB;
+	int color = WHITE;
 };
 
 
@@ -233,36 +245,39 @@ int main(int argc,char* argv[]){
 
 
 
-	/*reload_weight(V,vertices,E,true);
+	reload_weight(V,vertices,1,false);
 
 	//ALgoritmo KELE ( pesi a kele )
 	for(int i = 0; i < E; i++){
+
+		if(edges[i]->getColor() == BLACK)
+			continue;
 		
+		edges[i]->setColor(BLACK);
+
 		Vertex* vA = vertices[edges[i]->getVertexA()];
 		Vertex* vB = vertices[edges[i]->getVertexB()];
-		
-		//int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
-		
-		Vertex* min = vA->getWeight() < vB->getWeight() ? vA : vB;
-		Vertex* max = min == vA ? vB : vA;
 
-		//FORSE IL MAX ha nodi con grado inferiore a lui vicino, quindi mi conviene prendere il massimo
-			std::unordered_set<int> edges = max->getEdges();
-			if(edges != NULL){
-				int isPreferred = false;
-				for(int edge : *edges){
+		vA->setWeight(0);
+		vB->setWeight(0);
 
-				}
-
+		std::unordered_set<int>* vAEdges = vA->getEdges();
+		if(vAEdges != NULL){
+			for(int e : *vAEdges){
+				edges[e]->setColor(BLACK);
 			}
+		}
 
-		min->setWeight(0);
-		if(max->getWeight() != 0)
-			max->setWeight(max->getWeight()+1);
+		std::unordered_set<int>* vBEdges = vB->getEdges();
+		if(vBEdges != NULL){
+			for(int e : *vBEdges){
+				edges[e]->setColor(BLACK);
+			}
+		}
 
 	}
 
-	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco con doppio controllo sugli archi vicini con pesi by Kele",V,vertices,E,edges);*/
+	log("Due approssimazione",V,vertices,E,edges);
 
 
 
