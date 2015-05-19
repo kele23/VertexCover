@@ -1,4 +1,17 @@
+#File Oggetto
 *.o
 **/*.o
+
+#File Eseguibile
 *.x
 **/*.x
+
+#File di Output
+output.txt
+
+#File di Log
+log.txt
+
+#File temporanei GEDIT
+*~
+**/*~
