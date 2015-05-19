@@ -16,16 +16,16 @@ class Edge{
 
 public:
 
-	Edge(int vertexA,int vertexB){
+	Edge(Vertex* vertexA,Vertex* vertexB){
 		this->vertexA = vertexA;
 		this->vertexB = vertexB;
 	}
 
-	void setVertexA(int vertexA){
+	void setVertexA(Vertex* vertexA){
 		this->vertexA = vertexA;
 	}
 
-	void setVertexB(int vertexB){
+	void setVertexB(Vertex* vertexB){
 		this->vertexB = vertexB;
 	}
 
@@ -33,11 +33,11 @@ public:
 		this->color = color;
 	}
 
-	int getVertexA(){
+	Vertex* getVertexA(){
 		return this->vertexA;
 	}
 
-	int getVertexB(){
+	Vertex* getVertexB(){
 		return this->vertexB;
 	}
 
@@ -45,9 +45,13 @@ public:
 		return this->color;
 	}
 
+	int getTotalDegree(){
+		return vertexA->getDegree() + vertexB->getDegree();
+	}
+
 private:
-	int vertexA;
-	int vertexB;
+	Vertex* vertexA;
+	Vertex* vertexB;
 	int color = WHITE;
 };
 
@@ -84,6 +88,12 @@ public:
 		this->weight = weight;
 	}
 
+	int getDegree() {
+		if(this->edges == NULL)
+			return 0;
+		return this->edges->size();
+	}
+
 private:
 	int weight;
 	std::unordered_set<int> *edges;
@@ -116,8 +126,6 @@ int main(int argc,char* argv[]){
 		int vA,vB;
 		fscanf(input,"%d %d\n",&vA,&vB);
 		
-		Edge* edge = new Edge(vA,vB);
-		edges[i] = edge;
 
 		if(vertices[vA] == NULL)
 			vertices[vA] = new Vertex(E);
@@ -129,6 +137,9 @@ int main(int argc,char* argv[]){
 			vertices[vB] = new Vertex(E);
 		vertices[vB]->setWeight(vertices[vB]->getWeight()-1);
 		vertices[vB]->addEdge(i);
+
+		Edge* edge = new Edge(vertices[vA],vertices[vB]);
+		edges[i] = edge;
 	}
 
 	fclose(input);
@@ -282,6 +293,44 @@ int main(int argc,char* argv[]){
 
 
 
+	reload_weight(V,vertices,1,false);
+
+	//Due approssimazione con euristica per scelta arco di partenza
+
+	for(int i = 0; i < E; i++){
+
+		if(edges[i]->getColor() == BLACK)
+			continue;
+
+		edges[i]->setColor(BLACK);
+
+		Vertex* vA = vertices[edges[i]->getVertexA()];
+		Vertex* vB = vertices[edges[i]->getVertexB()];
+
+
+		vA->setWeight(0);
+		vB->setWeight(0);
+
+		std::unordered_set<int>* vAEdges = vA->getEdges();
+		if(vAEdges != NULL){
+			for(int e : *vAEdges){
+				edges[e]->setColor(BLACK);
+			}
+		}
+
+		std::unordered_set<int>* vBEdges = vB->getEdges();
+		if(vBEdges != NULL){
+			for(int e : *vBEdges){
+				edges[e]->setColor(BLACK);
+			}
+		}
+
+	}
+
+	log("Due approssimazione con euristica",V,vertices,E,edges);
+
+
+
 	/*------------------------------
 	END COMPUTAZIONE RISULTATO
 	------------------------------*/
@@ -365,5 +414,4 @@ void reload_weight(int V,Vertex** vertices,int E,bool use_degree){
 			vertices[i]->setWeight(E);
 
 	}
-
 }
