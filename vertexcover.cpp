@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <string>
+#include <set>
 #include <unordered_set>
 #include <iterator>
 
@@ -98,6 +99,12 @@ private:
 	int color = WHITE;
 };
 
+struct eComp  {
+	bool operator() (Edge* e1, Edge* e2) const {
+		return e1->getTotalDegree() > e2->getTotalDegree();
+	}
+};
+
 /*------------------------------
 END STRUTTURE UTILI
 ------------------------------*/
@@ -110,7 +117,7 @@ int main(int argc,char* argv[]){
 	int V,E;
 	Vertex** vertices;
 	Edge** edges;
-
+	std::set<Edge*, eComp> classifica;
 
 	/*------------------------------
 	LETTURA DA FILE
@@ -138,6 +145,7 @@ int main(int argc,char* argv[]){
 
 		Edge* edge = new Edge(vertices[vA],vertices[vB]);
 		edges[i] = edge;
+		classifica.insert(edge);
 	}
 
 	fclose(input);
@@ -200,8 +208,6 @@ int main(int argc,char* argv[]){
 
 
 	
-
-
 
 
 	reload_weight(V,vertices,1,false);
@@ -293,18 +299,14 @@ int main(int argc,char* argv[]){
 
 	reload_weight(V,vertices,1,false);
 
-	//Due approssimazione con euristica per scelta arco di partenza
+	//Due approssimazione con euristica per scelta arco peso max
 
-	for(int i = 0; i < E; i++){
+	while(!classifica.empty()) {
+		std::set<Edge*, eComp>::iterator it = classifica.begin();
+		Edge* ed = *it;
 
-		if(edges[i]->getColor() == BLACK)
-			continue;
-
-		edges[i]->setColor(BLACK);
-
-		Vertex* vA = edges[i]->getVertexA();
-		Vertex* vB = edges[i]->getVertexB();
-
+		Vertex* vA = ed->getVertexA();
+		Vertex* vB = ed->getVertexB();
 
 		vA->setWeight(0);
 		vB->setWeight(0);
@@ -312,17 +314,16 @@ int main(int argc,char* argv[]){
 		std::unordered_set<int>* vAEdges = vA->getEdges();
 		if(vAEdges != NULL){
 			for(int e : *vAEdges){
-				edges[e]->setColor(BLACK);
+				classifica.erase(edges[e]);
 			}
 		}
 
 		std::unordered_set<int>* vBEdges = vB->getEdges();
 		if(vBEdges != NULL){
 			for(int e : *vBEdges){
-				edges[e]->setColor(BLACK);
+				classifica.erase(edges[e]);
 			}
 		}
-
 	}
 
 	log("Due approssimazione con euristica",V,vertices,E,edges);
