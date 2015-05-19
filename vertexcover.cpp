@@ -233,6 +233,38 @@ int main(int argc,char* argv[]){
 
 
 
+	/*reload_weight(V,vertices,E,true);
+
+	//ALgoritmo KELE ( pesi a kele )
+	for(int i = 0; i < E; i++){
+		
+		Vertex* vA = vertices[edges[i]->getVertexA()];
+		Vertex* vB = vertices[edges[i]->getVertexB()];
+		
+		//int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
+		
+		Vertex* min = vA->getWeight() < vB->getWeight() ? vA : vB;
+		Vertex* max = min == vA ? vB : vA;
+
+		//FORSE IL MAX ha nodi con grado inferiore a lui vicino, quindi mi conviene prendere il massimo
+			std::unordered_set<int> edges = max->getEdges();
+			if(edges != NULL){
+				int isPreferred = false;
+				for(int edge : *edges){
+
+				}
+
+			}
+
+		min->setWeight(0);
+		if(max->getWeight() != 0)
+			max->setWeight(max->getWeight()+1);
+
+	}
+
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco con doppio controllo sugli archi vicini con pesi by Kele",V,vertices,E,edges);*/
+
+
 
 
 	/*------------------------------
@@ -278,6 +310,8 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges){
 
 	std::stringstream soluzione;
 
+	int solCount = 0;
+
 	for(int i = 0; i < V; i++){
 		std::cout << "V: " << i << "	W: " << vertices[i]->getWeight() << "	edges-> ";
 		std::unordered_set<int>* es = vertices[i]->getEdges();
@@ -291,12 +325,13 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges){
 		std::cout << std::endl;
 
 		if(vertices[i]->getWeight() == 0){
+			solCount++;
 			soluzione << i << " ";
 		}
 	}
 
 	if(!soluzione.str().empty())
-		std::cout << "Soluzione: " << soluzione.str() << std::endl;
+		std::cout << "Soluzione ( " << solCount << " ) : " << soluzione.str() << std::endl;
 
 }
 
