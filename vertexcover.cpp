@@ -247,7 +247,7 @@ int main(int argc,char* argv[]){
 
 	reload_weight(V,vertices,1,false);
 
-	//ALgoritmo KELE ( pesi a kele )
+	//Due approssimazione
 	for(int i = 0; i < E; i++){
 
 		if(edges[i]->getColor() == BLACK)
