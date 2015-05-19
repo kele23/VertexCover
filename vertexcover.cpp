@@ -12,50 +12,6 @@ STRUTTURE UTILI
 #define WHITE 0
 #define BLACK 1
 
-class Edge{
-
-public:
-
-	Edge(Vertex* vertexA,Vertex* vertexB){
-		this->vertexA = vertexA;
-		this->vertexB = vertexB;
-	}
-
-	void setVertexA(Vertex* vertexA){
-		this->vertexA = vertexA;
-	}
-
-	void setVertexB(Vertex* vertexB){
-		this->vertexB = vertexB;
-	}
-
-	void setColor(int color){
-		this->color = color;
-	}
-
-	Vertex* getVertexA(){
-		return this->vertexA;
-	}
-
-	Vertex* getVertexB(){
-		return this->vertexB;
-	}
-
-	int getColor(){
-		return this->color;
-	}
-
-	int getTotalDegree(){
-		return vertexA->getDegree() + vertexB->getDegree();
-	}
-
-private:
-	Vertex* vertexA;
-	Vertex* vertexB;
-	int color = WHITE;
-};
-
-
 class Vertex{
 
 public:
@@ -99,6 +55,49 @@ private:
 	std::unordered_set<int> *edges;
 };
 
+class Edge{
+
+public:
+
+	Edge(Vertex* vertexA,Vertex* vertexB){
+		this->vertexA = vertexA;
+		this->vertexB = vertexB;
+	}
+
+	void setVertexA(Vertex* vertexA){
+		this->vertexA = vertexA;
+	}
+
+	void setVertexB(Vertex* vertexB){
+		this->vertexB = vertexB;
+	}
+
+	void setColor(int color){
+		this->color = color;
+	}
+
+	Vertex* getVertexA(){
+		return this->vertexA;
+	}
+
+	Vertex* getVertexB(){
+		return this->vertexB;
+	}
+
+	int getColor(){
+		return this->color;
+	}
+
+	int getTotalDegree(){
+		return vertexA->getDegree() + vertexB->getDegree();
+	}
+
+private:
+	Vertex* vertexA;
+	Vertex* vertexB;
+	int color = WHITE;
+};
+
 /*------------------------------
 END STRUTTURE UTILI
 ------------------------------*/
@@ -126,7 +125,6 @@ int main(int argc,char* argv[]){
 		int vA,vB;
 		fscanf(input,"%d %d\n",&vA,&vB);
 		
-
 		if(vertices[vA] == NULL)
 			vertices[vA] = new Vertex(E);
 		vertices[vA]->setWeight(vertices[vA]->getWeight()-1);
@@ -167,8 +165,8 @@ int main(int argc,char* argv[]){
 	//BAR-YEHUDA & EVEN con pesi ad 1
 	for(int i = 0; i < E; i++){
 		
-		Vertex* vA = vertices[edges[i]->getVertexA()];
-		Vertex* vB = vertices[edges[i]->getVertexB()];
+		Vertex* vA = edges[i]->getVertexA();
+		Vertex* vB = edges[i]->getVertexB();
 		
 		int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
 		
@@ -188,8 +186,8 @@ int main(int argc,char* argv[]){
 	//BAR-YEHUDA & EVEN con pesi by Kele
 	for(int i = 0; i < E; i++){
 		
-		Vertex* vA = vertices[edges[i]->getVertexA()];
-		Vertex* vB = vertices[edges[i]->getVertexB()];
+		Vertex* vA = edges[i]->getVertexA();
+		Vertex* vB = edges[i]->getVertexB();
 		
 		int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
 		
@@ -211,8 +209,8 @@ int main(int argc,char* argv[]){
 	//Algoritmo KELE ( pesi a 1 )
 	for(int i = 0; i < E; i++){
 		
-		Vertex* vA = vertices[edges[i]->getVertexA()];
-		Vertex* vB = vertices[edges[i]->getVertexB()];
+		Vertex* vA = edges[i]->getVertexA();
+		Vertex* vB = edges[i]->getVertexB();
 		
 		//int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
 		
@@ -238,8 +236,8 @@ int main(int argc,char* argv[]){
 	//ALgoritmo KELE ( pesi a kele )
 	for(int i = 0; i < E; i++){
 		
-		Vertex* vA = vertices[edges[i]->getVertexA()];
-		Vertex* vB = vertices[edges[i]->getVertexB()];
+		Vertex* vA = edges[i]->getVertexA();
+		Vertex* vB = edges[i]->getVertexB();
 		
 		//int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
 		
@@ -266,8 +264,8 @@ int main(int argc,char* argv[]){
 		
 		edges[i]->setColor(BLACK);
 
-		Vertex* vA = vertices[edges[i]->getVertexA()];
-		Vertex* vB = vertices[edges[i]->getVertexB()];
+		Vertex* vA = edges[i]->getVertexA();
+		Vertex* vB = edges[i]->getVertexB();
 
 		vA->setWeight(0);
 		vB->setWeight(0);
@@ -304,8 +302,8 @@ int main(int argc,char* argv[]){
 
 		edges[i]->setColor(BLACK);
 
-		Vertex* vA = vertices[edges[i]->getVertexA()];
-		Vertex* vB = vertices[edges[i]->getVertexB()];
+		Vertex* vA = edges[i]->getVertexA();
+		Vertex* vB = edges[i]->getVertexB();
 
 
 		vA->setWeight(0);
