@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <string>
+#include <set>
 #include <unordered_set>
 #include <iterator>
 #include <cstring>
@@ -99,6 +100,12 @@ private:
 	int color = WHITE;
 };
 
+struct eComp  {
+	bool operator() (Edge* e1, Edge* e2) const {
+		return e1->getTotalDegree() > e2->getTotalDegree();
+	}
+};
+
 /*------------------------------
 END STRUTTURE UTILI
 ------------------------------*/
@@ -112,7 +119,7 @@ int main(int argc,char* argv[]){
 	int V,E;
 	Vertex** vertices;
 	Edge** edges;
-
+	std::set<Edge*, eComp> classifica;
 
 	/*------------------------------
 	LETTURA DA FILE
@@ -140,6 +147,7 @@ int main(int argc,char* argv[]){
 
 		Edge* edge = new Edge(vertices[vA],vertices[vB]);
 		edges[i] = edge;
+		classifica.insert(edge);
 	}
 
 	fclose(input);
@@ -202,8 +210,6 @@ int main(int argc,char* argv[]){
 
 
 	
-
-
 
 
 	reload_weight(V,vertices,1,false);
@@ -292,18 +298,16 @@ int main(int argc,char* argv[]){
 
 
 
-	reload_weight(V,vertices,E,true);
+	reload_weight(V,vertices,1,false);
 
-	//Due approssimazione
-	for(int i = 0; i < E; i++){
+	//Due approssimazione con euristica per scelta arco peso max
 
-		if(edges[i]->getColor() == BLACK)
-			continue;
-		
-		edges[i]->setColor(BLACK);
+	while(!classifica.empty()) {
+		std::set<Edge*, eComp>::iterator it = classifica.begin();
+		Edge* ed = *it;
 
-		Vertex* vA = edges[i]->getVertexA();
-		Vertex* vB = edges[i]->getVertexB();
+		Vertex* vA = ed->getVertexA();
+		Vertex* vB = ed->getVertexB();
 
 		vA->setWeight(0);
 		vB->setWeight(0);
@@ -311,20 +315,19 @@ int main(int argc,char* argv[]){
 		std::unordered_set<int>* vAEdges = vA->getEdges();
 		if(vAEdges != NULL){
 			for(int e : *vAEdges){
-				edges[e]->setColor(BLACK);
+				classifica.erase(edges[e]);
 			}
 		}
 
 		std::unordered_set<int>* vBEdges = vB->getEdges();
 		if(vBEdges != NULL){
 			for(int e : *vBEdges){
-				edges[e]->setColor(BLACK);
+				classifica.erase(edges[e]);
 			}
 		}
-
 	}
 
-	log("Due approssimazione",V,vertices,E,edges,true);
+	log("Due approssimazione con scelta arco max",V,vertices,E,edges,true);
 
 
 
@@ -332,13 +335,30 @@ int main(int argc,char* argv[]){
 	reload_weight(V,vertices,E,true);
 
 	//Scelta dell'arco da guardare, dagli archi con meno vertici
-	//Edge** cpyEdges = new Edge*[E];
-	//std::memcpy(cpyEdges,edges,E);
+	Edge** cpyEdges = new Edge*[E];
+	std::memcpy(cpyEdges,edges,E*sizeof(Edge*));
 
-	merge_sort(edges,0,E-1);
+	merge_sort(cpyEdges,0,E-1);
+
+	//ALgoritmo KELE ( pesi a kele )
+	for(int i = 0; i < E; i++){
+		
+		Vertex* vA = cpyEdges[i]->getVertexA();
+		Vertex* vB = cpyEdges[i]->getVertexB();
+		
+		//int epsilon = vA->getWeight() < vB->getWeight() ? vA->getWeight() : vB->getWeight();
+		
+		Vertex* min = vA->getWeight() < vB->getWeight() ? vA : vB;
+		Vertex* max = min == vA ? vB : vA;
+
+		min->setWeight(0);
+		if(max->getWeight() != 0)
+			max->setWeight(max->getWeight()+1);
+
+	}
 
 
-	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Clever Greedy ) con pesi by Kele e scelta del primo arco.",V,vertices,E,edges,true);
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Clever Greedy ) con pesi by Kele e scelta del primo arco.",V,vertices,E,cpyEdges,true);
 
 
 
@@ -463,7 +483,7 @@ void merge(Edge** edges,int start,int k,int end){
 		temp[i++] = edges[pRight++];
 	}
 
-	std::memcpy(&(edges[start]),temp,end-start+1);
+	std::memcpy(&(edges[start]),temp,(end-start+1)*sizeof(Edge*));
 
 }
 
