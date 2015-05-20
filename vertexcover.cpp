@@ -403,6 +403,8 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges,bool log_e
 	std::cout << title << std::endl;
 	std::cout << "-------------------------" << std::endl;
 
+	std::cout << "######### VERTICES ###########" << std::endl;
+
 	std::stringstream soluzione;
 
 	int solCount = 0;
@@ -431,7 +433,7 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges,bool log_e
 	if(log_edges){
 		std::cout << "######### EDGES ###########" << std::endl;
 		for(int i = 0; i < E; i++){
-			std::cout << "E: " << i << " W: "<< edges[i]->getTotalDegree() << std::endl;
+			std::cout << "E: " << i << "	W: "<< edges[i]->getTotalDegree() << std::endl;
 		}
 	}
 
@@ -456,8 +458,6 @@ void reload_weight(int V,Vertex** vertices,int E,bool use_degree){
 }
 
 void merge(Edge** edges,int start,int k,int end){
-
-	std::cout << "Merge: " << start << " " << k << " " << end << std::endl;
 
 	Edge** temp = new Edge*[end-start+1];
 
@@ -488,8 +488,6 @@ void merge(Edge** edges,int start,int k,int end){
 }
 
 void merge_sort(Edge** edges, int start, int end){
-
-	std::cout << "MSort: " << start << " " << end << std::endl;
 
 	if(start >= end)
 		return;
