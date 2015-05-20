@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_set>
 #include <iterator>
+#include <cstring>
 
 /*------------------------------
 STRUTTURE UTILI
@@ -102,8 +103,9 @@ private:
 END STRUTTURE UTILI
 ------------------------------*/
 
-void log(std::string,int V,Vertex** vertices,int E,Edge** edges);
+void log(std::string,int V,Vertex** vertices,int E,Edge** edges,bool log_edges);
 void reload_weight(int V,Vertex** vertices,int E,bool use_degree);
+void merge_sort(Edge** edges,int start,int end);
 
 int main(int argc,char* argv[]){
 
@@ -142,7 +144,7 @@ int main(int argc,char* argv[]){
 
 	fclose(input);
 
-	log("Lettura del Grafo",V,vertices,E,edges);
+	log("Lettura del Grafo",V,vertices,E,edges,false);
 	/*------------------------------
 	END LETTURA DA FILE
 	------------------------------*/
@@ -175,7 +177,7 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Uso dell'algoritmo BAR-YEHUDA & EVEN con pesi ad 1",V,vertices,E,edges);
+	log("Uso dell'algoritmo BAR-YEHUDA & EVEN con pesi ad 1",V,vertices,E,edges,false);
 
 	
 
@@ -196,7 +198,7 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Uso dell'algoritmo BAR-YEHUDA & EVEN con pesi by Kele",V,vertices,E,edges);
+	log("Uso dell'algoritmo BAR-YEHUDA & EVEN con pesi by Kele",V,vertices,E,edges,false);
 
 
 	
@@ -223,7 +225,7 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Basato su BAR-YEHUDA & EVEN ) con pesi ad 1",V,vertices,E,edges);
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Clever Greedy ) con pesi ad 1",V,vertices,E,edges,false);
 
 
 
@@ -250,7 +252,7 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Basato su BAR-YEHUDA & EVEN ) con pesi by Kele",V,vertices,E,edges);
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Clever Greedy ) con pesi by Kele",V,vertices,E,edges,false);
 
 
 
@@ -286,25 +288,22 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Due approssimazione",V,vertices,E,edges);
+	log("Due approssimazione",V,vertices,E,edges,false);
 
 
 
+	reload_weight(V,vertices,E,true);
 
-	reload_weight(V,vertices,1,false);
-
-	//Due approssimazione con euristica per scelta arco di partenza
-
+	//Due approssimazione
 	for(int i = 0; i < E; i++){
 
 		if(edges[i]->getColor() == BLACK)
 			continue;
-
+		
 		edges[i]->setColor(BLACK);
 
 		Vertex* vA = edges[i]->getVertexA();
 		Vertex* vB = edges[i]->getVertexB();
-
 
 		vA->setWeight(0);
 		vB->setWeight(0);
@@ -325,7 +324,21 @@ int main(int argc,char* argv[]){
 
 	}
 
-	log("Due approssimazione con euristica",V,vertices,E,edges);
+	log("Due approssimazione",V,vertices,E,edges,true);
+
+
+
+
+	reload_weight(V,vertices,E,true);
+
+	//Scelta dell'arco da guardare, dagli archi con meno vertici
+	//Edge** cpyEdges = new Edge*[E];
+	//std::memcpy(cpyEdges,edges,E);
+
+	merge_sort(edges,0,E-1);
+
+
+	log("Uso dell'algoritmo KELE, modifica grado a rimozione di un arco ( Clever Greedy ) con pesi by Kele e scelta del primo arco.",V,vertices,E,edges,true);
 
 
 
@@ -361,7 +374,7 @@ int main(int argc,char* argv[]){
 
 }
 
-void log(std::string title,int V,Vertex** vertices,int E,Edge** edges){
+void log(std::string title,int V,Vertex** vertices,int E,Edge** edges,bool log_edges){
 
 	static int log_number = 1;
 
@@ -395,7 +408,15 @@ void log(std::string title,int V,Vertex** vertices,int E,Edge** edges){
 	if(!soluzione.str().empty())
 		std::cout << "Soluzione ( " << solCount << " ) : " << soluzione.str() << std::endl;
 
+	if(log_edges){
+		std::cout << "######### EDGES ###########" << std::endl;
+		for(int i = 0; i < E; i++){
+			std::cout << "E: " << i << " W: "<< edges[i]->getTotalDegree() << std::endl;
+		}
+	}
+
 }
+
 
 void reload_weight(int V,Vertex** vertices,int E,bool use_degree){
 
@@ -412,4 +433,52 @@ void reload_weight(int V,Vertex** vertices,int E,bool use_degree){
 			vertices[i]->setWeight(E);
 
 	}
+}
+
+void merge(Edge** edges,int start,int k,int end){
+
+	std::cout << "Merge: " << start << " " << k << " " << end << std::endl;
+
+	Edge** temp = new Edge*[end-start+1];
+
+	int pLeft = start;
+	int pRight = k+1;
+
+	int i = 0;
+	while(pLeft <= k && pRight <= end){
+		if(edges[pLeft]->getTotalDegree() < edges[pRight]->getTotalDegree()){
+			temp[i++] = edges[pLeft++];
+		}else{
+			temp[i++] = edges[pRight++];
+		}
+	}
+
+	//Rimangono elementi sul lato sinistro
+	while(pLeft <= k){
+		temp[i++] = edges[pLeft++];
+	}
+
+	//Rimangono elementi sul lato destro
+	while(pRight <= end){
+		temp[i++] = edges[pRight++];
+	}
+
+	std::memcpy(&(edges[start]),temp,end-start+1);
+
+}
+
+void merge_sort(Edge** edges, int start, int end){
+
+	std::cout << "MSort: " << start << " " << end << std::endl;
+
+	if(start >= end)
+		return;
+
+	int k = start+( (end-start)/2 );
+
+	merge_sort(edges,start,k);
+	merge_sort(edges,k+1,end);
+
+	merge(edges,start,k,end);
+
 }
