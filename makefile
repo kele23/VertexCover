@@ -13,7 +13,7 @@ vertexcover_3.x: vertexcover_3.cpp
 vertexcover_4.x: vertexcover_4.cpp
 	g++ -g -o $@ $< -std=c++11
 
-vertexcover_5.x: vertexcover_5.cpp
+vertexcover_finale.x: vertexcover_finale.cpp
 	g++ -g -o $@ $< -std=c++11
 
 .PHONY: clean

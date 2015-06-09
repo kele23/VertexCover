@@ -5,7 +5,7 @@ for f in $1/*
 do
   echo "Processing $f"
   cp $f input.txt
-  time ./vertexcover_5.x
+  time ./vertexcover_finale.x
   echo "Result Ready"
   res="${f//input/result}"
   java Verificatore $f $res output.txt
